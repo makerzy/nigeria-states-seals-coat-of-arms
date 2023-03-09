@@ -41,15 +41,14 @@ states = [
     "Taraba State",
     "Yobe State",
     "Zamfara State",
-    "Federal_Capital_Territory_(Nigeria)",
+    # "Federal_Capital_Territory_(Nigeria)",
 ]
 
 def scrape_wiki():
     for state in states:
         state = state.replace(' ', '_')
-        print("state: ",state)
         # the URL of the web page that we want to get transaction data
-        api_url = "https://en.wikipedia.org/wiki/"+state
+        api_url = "https://en.wikipedia.org/wiki/File:" + state + "_Seal.png"
         # HTTP headers used to send a HTTP request
         headers = {
             'User-Agent':
@@ -57,28 +56,38 @@ def scrape_wiki():
         }
         # Pauses for 0.5 seconds before sending the next request
         sleep(0.5)
+        print("API: ", api_url)
         # send the request to get data in the webpage
-
+        # document.querySelector("#file")
         response = requests.get(api_url, headers=headers)
-        for row in BeautifulSoup(response.content, 'html.parser').select(('table tbody tr td div div div')):
-            images = row.select('a img')
+        for row in BeautifulSoup(response.content, 'html.parser').findAll(
+            ("div", {
+                "id": "articlebody"
+            })):
            
-            if len(images) and images[0]['alt'].startswith("Seal"):
-                # print("image len: ", images[0]['alt'])
-                url = "https:" + images[0]['src']
-                print(url)
-            # get image data and write to disk
-                if len(url):
-                    img_data = requests.get(url).content
-                    dir_path = os.path.dirname(os.path.realpath(__file__))
-                    with open(dir_path + "\\data\\" "seal_of_"+ state.lower() + '.png',
-                            'wb') as handler:
-                        handler.write(img_data)
-                        sleep(0.5)
-                    print("Downloaded: ", state)
-    
+            images = row.select('a img')
+            print("image: ", images)
+            # if len(images) and images[0]['alt'].startswith("Seal"):
+            #     # print("image len: ", images[0]['alt'])
+            #     url = "https:" + images[0]['src']
+            #     print(url)
+            #     # get image data and write to disk
+            #     if len(url):
+            #         img_data = requests.get(
+            #             "https://upload.wikimedia.org/wikipedia/en/"
+            #         ).content
+            #         dir_path = os.path.dirname(os.path.realpath(__file__))
+            #         with open(dir_path + "\\data\\" "seal_of_"+ state.lower() + '.png',
+            #                 'wb') as handler:
+            #             handler.write(img_data)
+            #             sleep(0.5)
+            #         print("Downloaded: ", state)
+
 
 
 if __name__ == "__main__":  # entrance to the main function
     scrape_wiki()
-   
+
+# https://upload.wikimedia.org/wikipedia/en/c/c8/Seal_of_Anambra_State.png
+
+#
